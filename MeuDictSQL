@@ -1,0 +1,162 @@
+/*
+	OLTP - Online Transaction Processing > É um banco "tradicional", acontece inserção, att e Exlusão.
+		Ele é otimizado para processar e gerenciar um grande número de transações em tempo real.
+		Alto volume de transações: Ele é projetado para suportar muitas transações simultâneas
+		e manter a integridade dos dados durante essas transações.
+		Baixa latência: O tempo de resposta é crucial no OLTP, pois as transações são realizadas em tempo real.
+
+	OLAP - Online Analytical Processing
+		Operações de Extração, Recuperação e análise de dados históricos.
+		Modelagem multidimensional: O OLAP organiza os dados em estruturas multidimensionais, como cubos, 
+		para permitir uma análise mais flexível e detalhada.
+		Latência mais alta: Embora o OLAP ainda seja eficiente, ele não precisa fornecer respostas em tempo real como o OLTP.
+*/
+-------------------=====================  =====================-------------------
+/*
+
+DDL - Data Definition Language - Linguagem de Definição de Dados.
+São os comandos que interagem com os objetos do banco.
+	São comandos DDL : CREATE, ALTER e DROP
+
+DML - Data Manipulation Language - Linguagem de Manipulação de Dados.
+São os comandos que interagem com os dados dentro das tabelas.
+	São comandos DML : INSERT, DELETE e UPDATE
+
+DQL - Data Query Language - Linguagem de Consulta de dados.
+São os comandos de consulta.
+	São comandos DQL : SELECT (é o comando de consulta)
+Aqui cabe um parenteses. Em alguns livros o SELECT fica na DML em outros tem esse grupo próprio.
+
+*/
+
+--Comandos do tipo Data:
+
+--EOMONTH - https://docs.microsoft.com/pt-br/sql/t-sql/functions/eomonth-transact-sql?view=sql-server-ver15
+-- Pega o Ultimo dia do Mês
+select EOMONTH(GETDATE()) as UltimoDiaDessMes
+
+--select EOMONTH('20230201')
+
+--DATEADD - https://docs.microsoft.com/pt-br/sql/t-sql/functions/dateadd-transact-sql?view=sql-server-ver15
+
+--Adcionar Time ao Day
+select DATEADD(SECOND,86399, GETDATE()) --> Pega 23:59:59 atrás
+select DATEADD(DAY,-1, GETDATE()) --> Pega 1 dia atrás
+
+select convert(time, DATEADD(SECOND,86399, 0)) --> Pega a quantidade de segundos aplicados no DATEADD 
+
+--Sempre pega o primeiro dia do Mês
+select DATEADD(day, -day(getdate()-1),getdate())
+
+--DATEDIFF - https://docs.microsoft.com/pt-br/sql/t-sql/functions/datediff-transact-sql?view=sql-server-ver15
+
+--DATEPART - https://docs.microsoft.com/pt-br/sql/t-sql/functions/datepart-transact-sql?view=sql-server-ver15
+select DATEPART(hour, getdate())
+
+--DAY - https://docs.microsoft.com/pt-br/sql/t-sql/functions/day-transact-sql?view=sql-server-ver15
+--YEAR - https://docs.microsoft.com/pt-br/sql/t-sql/functions/year-transact-sql?view=sql-server-ver15
+--MONTH - https://docs.microsoft.com/pt-br/sql/t-sql/functions/month-transact-sql?view=sql-server-ver15
+--ISDATE - https://docs.microsoft.com/pt-br/sql/t-sql/functions/isdate-transact-sql?view=sql-server-ver15
+--GETDATE - https://docs.microsoft.com/pt-br/sql/t-sql/functions/getdate-transact-sql?view=sql-server-ver15
+
+--Conversão DateTimeOffSet com Char + 
+Select cast(replace('2022-10-18T17:05:41.130+0000','+','' )as datetime2(0))
+
+--Comandos para texto :
+
+
+--CHARINDEX - https://docs.microsoft.com/pt-br/sql/t-sql/functions/charindex-transact-sql?view=sql-server-ver15
+--pega a posição de uma Carácter em uma String
+SELECT CHARINDEX('e', 'Valdefran') AS Posicao; --Começa em 1
+
+--CONCAT - https://docs.microsoft.com/pt-br/sql/t-sql/functions/concat-transact-sql?view=sql-server-ver15
+--LEFT - https://docs.microsoft.com/pt-br/sql/t-sql/functions/left-transact-sql?view=sql-server-ver15
+SELECT LEFT('SQL Tutorial', 3) AS ExtractString
+
+--LEN - https://docs.microsoft.com/pt-br/sql/t-sql/functions/len-transact-sql?view=sql-server-ver15 
+--LOWER - https://docs.microsoft.com/pt-br/sql/t-sql/functions/lower-transact-sql?view=sql-server-ver15
+--LTRIM - https://docs.microsoft.com/pt-br/sql/t-sql/functions/ltrim-transact-sql?view=sql-server-ver15
+--PATINDEX - https://docs.microsoft.com/pt-br/sql/t-sql/functions/patindex-transact-sql?view=sql-server-ver15
+
+select LEFT('Valdefran', PATINDEX('%d%', 'Valdefran'))
+
+--REPLACE - https://docs.microsoft.com/pt-br/sql/t-sql/functions/replace-transact-sql?view=sql-server-ver15
+--REVERSE - https://docs.microsoft.com/pt-br/sql/t-sql/functions/reverse-transact-sql?view=sql-server-ver15
+
+select reverse(substring(REVERSE('Valdefran-Costa '), 0, charindex('-',REVERSE('Valdefran-Costa '))))
+
+--RIGHT - https://docs.microsoft.com/pt-br/sql/t-sql/functions/right-transact-sql?view=sql-server-ver15
+--RTRIM - https://docs.microsoft.com/pt-br/sql/t-sql/functions/rtrim-transact-sql?view=sql-server-ver15
+--SUBSTRING - https://docs.microsoft.com/pt-br/sql/t-sql/functions/substring-transact-sql?view=sql-server-ver15
+
+select SUBSTRING('Valdefran Pereira-Costa', 0, charindex('-', 'Valdefran Pereira-Costa'))
+
+SELECT SUBSTRING('Valdefran Pereira Costa', 1, CHARINDEX(' ', 'Valdefran Pereira Costa') - 1) AS PrimeiroNome
+SELECT REVERSE(SUBSTRING(REVERSE('Valdefran Pereira Costa'), 1, CHARINDEX(' ', REVERSE('Valdefran Pereira Costa')) - 1)) AS UltimoNome
+SELECT SUBSTRING('Valdefran Pereira Costa', CHARINDEX(' ', 'Valdefran Pereira Costa') + 1, LEN('Valdefran Pereira Costa') - CHARINDEX(' ', 'Valdefran Pereira Costa')) AS UltimoNome
+
+--UPPER - https://docs.microsoft.com/pt-br/sql/t-sql/functions/upper-transact-sql?view=sql-server-ver15
+
+--Comandos de Conversão :
+
+
+--CAST e CONVERT - https://docs.microsoft.com/pt-br/sql/t-sql/functions/cast-and-convert-transact-sql?view=sql-server-ver15
+--TRY_CAST - https://docs.microsoft.com/pt-br/sql/t-sql/functions/try-cast-transact-sql?view=sql-server-ver15
+--TRY_CONVERT - https://docs.microsoft.com/pt-br/sql/t-sql/functions/try-convert-transact-sql?view=sql-server-ver15
+
+
+--Comandos de Função Agregada :
+
+	/*	SEMPRE USAR COM GROUP BY EM TODAS AS OUTRAS SELEÇÕES QUE NÃO TEM FUNÇÃO DE EGREGAÇÃO*/
+--AVG - https://docs.microsoft.com/pt-br/sql/t-sql/functions/avg-transact-sql?view=sql-server-ver15
+--COUNT - https://docs.microsoft.com/pt-br/sql/t-sql/functions/count-transact-sql?view=sql-server-ver15
+--MAX - https://docs.microsoft.com/pt-br/sql/t-sql/functions/max-transact-sql?view=sql-server-ver15
+--MIN - https://docs.microsoft.com/pt-br/sql/t-sql/functions/min-transact-sql?view=sql-server-ver15
+--SUM - https://docs.microsoft.com/pt-br/sql/t-sql/functions/sum-transact-sql?view=sql-server-ver15
+
+
+--Comandos de Classificação :
+
+
+--NTILE - https://docs.microsoft.com/pt-br/sql/t-sql/functions/ntile-transact-sql?view=sql-server-ver15
+--RANK - https://docs.microsoft.com/pt-br/sql/t-sql/functions/rank-transact-sql?view=sql-server-ver15
+
+--ROW_NUMBER - https://docs.microsoft.com/pt-br/sql/t-sql/functions/row-number-transact-sql?view=sql-server-ver15
+
+
+--Comandos Gerais :
+
+
+--CASE WHEN - https://docs.microsoft.com/pt-br/sql/t-sql/language-elements/case-transact-sql?view=sql-server-ver15
+--JOIN (LEFT,RIGHT,CROSS...) - https://docs.microsoft.com/pt-br/sql/relational-databases/performance/joins?view=sql-server-ver15
+--UNION E UNION ALL - https://docs.microsoft.com/pt-br/sql/t-sql/language-elements/set-operators-union-transact-sql?view=sql-server-ver15
+--NOLOCK - https://docs.microsoft.com/pt-br/sql/t-sql/queries/hints-transact-sql-table?view=sql-server-ver15
+--BETWEEN - https://docs.microsoft.com/pt-br/sql/t-sql/language-elements/between-transact-sql?view=sql-server-ver15
+
+--NULLIF - https://docs.microsoft.com/pt-br/sql/t-sql/language-elements/nullif-transact-sql?view=sql-server-ver15
+--Tras NULL se alguma coisa
+--ISNULL - https://docs.microsoft.com/pt-br/sql/t-sql/functions/isnull-transact-sql?view=sql-server-ver15
+--Se for NULL ele substitui
+
+--ISNUMERIC - https://docs.microsoft.com/pt-br/sql/t-sql/functions/isnumeric-transact-sql?view=sql-server-ver15
+--Verifica se algo é Numero e retorna com 1(True) ou 0(false)
+select ISNUMERIC(20) as Retorno1, ISNUMERIC('A') as RetornoB
+
+--IS NULL - https://docs.microsoft.com/pt-br/sql/t-sql/queries/is-null-transact-sql?view=sql-server-ver15
+--ORDER BY - https://docs.microsoft.com/pt-br/sql/t-sql/queries/select-order-by-clause-transact-sql?view=sql-server-ver15
+--ROUND - https://docs.microsoft.com/pt-br/sql/t-sql/functions/round-transact-sql?view=sql-server-ver15
+
+
+--Comandas Avan�ados :
+
+
+--Funções JSON - https://docs.microsoft.com/pt-br/sql/t-sql/functions/json-functions-transact-sql?view=sql-server-ver15
+--ISJSON  - https://docs.microsoft.com/pt-br/sql/t-sql/functions/isjson-transact-sql?view=sql-server-ver15
+--JSON_VALUE - https://docs.microsoft.com/pt-br/sql/t-sql/functions/json-value-transact-sql?view=sql-server-ver15
+
+
+--DECLARAÇÃO DE VARIAVEIS - https://pedrogalvaojunior.wordpress.com/2008/10/06/declarando-variaveis-no-sql-server-2008/
+--
+--Ex.:
+--DECLARE @DATAI DATETIME = '2020-07-01'
+--DECLARE @NOME VARCHAR(100) = 'FULANO DE TAL'
